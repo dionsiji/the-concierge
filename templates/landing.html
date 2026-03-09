@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<section
+    class="hero-section text-center text-white d-flex flex-column align-items-center justify-content-center position-relative overflow-hidden">
+    <!-- Carousel Background -->
+    <div id="heroCarousel" class="carousel slide carousel-fade w-100 h-100 position-absolute top-0 start-0 z-0"
+        data-bs-ride="carousel" data-bs-interval="3000">
+        <div class="carousel-inner w-100 h-100">
+            {% for r in restaurants %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %} w-100 h-100">
+                <div
+                    style="background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url('{% if r.image %}{{ r.image.url }}{% else %}/static/images/placeholder.webp{% endif %}') no-repeat center center/cover; width:100%; height:100%;">
+                </div>
+            </div>
+            {% for g in r.gallery.all %}
+            <div class="carousel-item w-100 h-100">
+                <div
+                    style="background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url('{{ g.image.url }}') no-repeat center center/cover; width:100%; height:100%;">
+                </div>
+            </div>
+            {% endfor %}
+            {% empty %}
+            <div class="carousel-item active w-100 h-100">
+                <div
+                    style="background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url('/static/images/hero.webp') no-repeat center center/cover; width:100%; height:100%;">
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="container position-relative z-1" data-aos="fade-up" data-aos-duration="1500">
+        <h1 class="font-secondary display-3 fw-bold tracking-widest text-gold mb-3 text-uppercase">Experience Fine
+            Dining, Redefined</h1>
+        <p class="lead mb-5 tracking-wider fw-light">A symphony of taste. An ambiance of elegance. Unparalleled service.
+        </p>
+        <a href="#restaurants"
+            class="btn btn-outline-gold px-5 py-3 text-uppercase tracking-wider fw-bold hover-scale">Explore
+            Restaurants</a>
+    </div>
+
+    <div class="position-absolute bottom-0 mb-4 animate-bounce z-1">
+        <a href="#presentation" class="text-gold"><i class="fas fa-chevron-down fa-2x"></i></a>
+    </div>
+</section>
+
+<!-- Presentation Section (Scroll individually) -->
+<section id="presentation" class="bg-black py-5">
+    {% for r in restaurants %}
+    <div class="container min-vh-100 d-flex align-items-center py-5" data-aos="fade-up" data-aos-duration="1500">
+        <div class="row w-100 align-items-center {% if forloop.counter|divisibleby:2 %}flex-row-reverse{% endif %}">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <img src="{% if r.image %}{{ r.image.url }}{% else %}/static/images/placeholder.webp{% endif %}"
+                    alt="{{ r.name }}"
+                    class="img-fluid border border-dark rounded shadow-lg transition-transform hover-scale">
+            </div>
+            <div class="col-lg-6 text-{% if forloop.counter|divisibleby:2 %}end{% else %}start{% endif %} px-5">
+                <h4 class="text-gold tracking-widest text-uppercase fs-6 mb-2">{{ r.location }}</h4>
+                <h2 class="font-secondary display-5 text-white mb-4">{{ r.name }}</h2>
+                <div class="mb-4">
+                    <span class="badge bg-dark-red p-2 me-2 tracking-wider fw-normal">{{ r.cuisine }}</span>
+                </div>
+                <p class="text-secondary lh-lg mb-5" style="font-size: 1.1rem;">{{ r.description }}</p>
+                <a href="{% url 'restaurant_detail' r.id %}"
+                    class="text-gold text-uppercase tracking-wider hover-scale d-inline-block border-bottom border-gold pb-1"><i
+                        class="fas fa-arrow-right me-2"></i>Discover More</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</section>
+
+<!-- Grid Selection Section -->
+<section id="restaurants" class="bg-black-gradient py-5 mt-5">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-down">
+            <h2 class="font-secondary text-white mb-3">Make Your Decision</h2>
+            <div style="width: 50px; height: 2px; background-color: var(--gold); margin: 0 auto;"></div>
+        </div>
+
+        <div class="row g-4">
+            {% for r in restaurants %}
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:'1' }}00">
+                <a href="{% url 'restaurant_detail' r.id %}" class="d-block text-decoration-none">
+                    <div class="restaurant-card rounded position-relative">
+                        <div class="card-img"
+                            style="background-image: url('{% if r.image %}{{ r.image.url }}{% else %}/static/images/placeholder.webp{% endif %}');">
+                        </div>
+                        <div class="p-4 bg-black h-100 position-relative z-1">
+                            <h3 class="font-secondary text-gold mb-1 fs-4">{{ r.name }}</h3>
+                            <p class="text-secondary tracking-wider fs-7 text-uppercase mb-3">{{ r.location }}</p>
+                            <p class="text-white fw-light fs-7">{{ r.description|truncatechars:80 }}</p>
+                            <div class="mt-4 text-end">
+                                <span class="btn btn-outline-gold rounded-custom px-3 py-1 fs-8 text-uppercase">View
+                                    Detail</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+            {% if not restaurants %}
+            <div class="col-12 text-center text-muted">No restaurants available yet. Please run setup.</div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<style>
+    @keyframes bounce {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(10px);
+        }
+    }
+
+    .animate-bounce {
+        animation: bounce 2s infinite;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+</style>
+{% endblock %}

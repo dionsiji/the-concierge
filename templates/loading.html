@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block header %}{% endblock %}
+
+{% block content %}
+<div class="loading-screen" id="loading-screen">
+    <div class="text-center">
+        <h1 class="font-secondary loading-text" id="logo-text">THE CONCIERGE</h1>
+        <div class="mt-4" style="width: 1px; height: 50px; background-color: var(--gold); margin: 0 auto; opacity: 0;"
+            id="line-anim"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Setup GSAP Animations
+        const tl = gsap.timeline({
+            onComplete: () => {
+                // Redirect to landing page
+                window.location.href = "{% url 'landing' %}";
+            }
+        });
+
+        tl.to("#logo-text", {
+            opacity: 1,
+            y: -10,
+            duration: 1.5,
+            ease: "power2.out",
+            delay: 0.5
+        })
+            .to("#line-anim", {
+                opacity: 1,
+                scaleY: 1,
+                duration: 1,
+                ease: "power1.inOut"
+            }, "-=0.5")
+            .to(".loading-screen", {
+                opacity: 0,
+                duration: 1,
+                ease: "power2.inOut",
+                delay: 0.5
+            });
+    });
+</script>
+{% endblock %}

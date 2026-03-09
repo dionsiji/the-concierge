@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ restaurant.name }} | The Concierge{% endblock %}
+
+{% block content %}
+<div class="position-relative overflow-hidden mb-5">
+    <div id="restaurantCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner" style="height: 60vh;">
+            <div class="carousel-item active h-100">
+                <img src="{% if restaurant.image %}{{ restaurant.image.url }}{% else %}/static/images/placeholder.webp{% endif %}"
+                    class="d-block w-100 h-100 object-fit-cover" alt="{{ restaurant.name }}">
+                <div class="carousel-caption d-none d-md-block bg-black opacity-75 rounded p-3">
+                    <h5 class="font-secondary text-gold display-5">{{ restaurant.name }}</h5>
+                    <p class="tracking-widest">{{ restaurant.location }}</p>
+                </div>
+            </div>
+            {% for g in restaurant.gallery.all %}
+            <div class="carousel-item h-100">
+                <img src="{{ g.image.url }}" class="d-block w-100 h-100 object-fit-cover" alt="Gallery image">
+            </div>
+            {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#restaurantCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#restaurantCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</div>
+
+<div class="container py-5" data-aos="fade-up">
+    <div class="row gx-5">
+        <div class="col-lg-8">
+            <span class="text-uppercase tracking-widest text-gold fs-8 mb-2 d-block">The Experience</span>
+            <h2 class="font-secondary display-4 text-white mb-4">{{ restaurant.name }}</h2>
+
+            <p class="lead text-secondary lh-lg mb-5" style="font-weight: 300;">{{ restaurant.description }}</p>
+
+            <div class="row mb-5 g-4 border-top border-bottom border-dark py-4">
+                <div class="col-md-4">
+                    <h5 class="text-white text-uppercase tracking-wider fs-7">Cuisine</h5>
+                    <p class="text-gold font-secondary fs-5 mb-0">{{ restaurant.cuisine }}</p>
+                </div>
+                <div class="col-md-4">
+                    <h5 class="text-white text-uppercase tracking-wider fs-7">Theme</h5>
+                    <p class="text-gold font-secondary fs-5 mb-0">{{ restaurant.theme }}</p>
+                </div>
+                <div class="col-md-4">
+                    <h5 class="text-white text-uppercase tracking-wider fs-7">Location</h5>
+                    <p class="text-gold font-secondary fs-5 mb-0">{{ restaurant.location }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="bg-black-gradient border border-dark p-5 position-sticky top-0 shadow-lg"
+                style="margin-top: -150px; z-index: 10;">
+                <h3 class="font-secondary text-white border-bottom border-secondary pb-3 mb-4">Reservations</h3>
+                <p class="text-secondary fs-7 mb-4 lh-lg">Secure your exquisite dining experience today. High demand for
+                    our handpicked venues necessitates advance booking.</p>
+                <div class="d-grid gap-3">
+                    <a href="{% url 'book_seats' restaurant.id %}"
+                        class="btn btn-gold py-3 text-uppercase tracking-wider fw-bold hover-scale">Book Seats</a>
+                    <a href="{% url 'public_menu' restaurant.id %}"
+                        class="btn btn-outline-gold py-3 text-uppercase tracking-wider fw-bold hover-scale">View
+                        Menu</a>
+                </div>
+
+                <div class="mt-5 text-center">
+                    <div style="width: 40px; height: 1px; background-color: var(--gold); margin: 0 auto 1rem;"></div>
+                    <span class="text-uppercase tracking-widest text-gold fs-8 d-block mb-1">Dietary Requirements</span>
+                    <p class="text-secondary fs-8">Accommodated upon request.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

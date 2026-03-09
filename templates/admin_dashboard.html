@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard | The Concierge{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-5" data-aos="fade-up">
+        <div class="col-12 d-flex justify-content-between align-items-center border-bottom border-dark pb-3">
+            <h1 class="font-secondary display-5 text-white">Concierge Group <span class="text-gold">Admin Port</span>
+            </h1>
+            <div class="text-end">
+                <span class="d-block text-secondary text-uppercase tracking-widest fs-8 mb-1">Session Data</span>
+                <span class="badge bg-gold text-black rounded-pill px-3 py-2 fs-7">STAFF ACCESS</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row g-4 mb-5" data-aos="fade-up" data-aos-delay="100">
+        <div class="col-md-3">
+            <div class="bg-black-gradient border border-dark p-4 rounded text-center">
+                <i class="fas fa-calendar-alt text-gold mb-3 fs-3"></i>
+                <h6 class="text-white text-uppercase tracking-widest fs-8">Total Bookings</h6>
+                <h2 class="font-secondary text-white mb-0">{{ total_res }}</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="bg-black-gradient border border-dark p-4 rounded text-center">
+                <i class="fas fa-utensils text-gold mb-3 fs-3"></i>
+                <h6 class="text-white text-uppercase tracking-widest fs-8">Active Venues</h6>
+                <h2 class="font-secondary text-white mb-0">{{ restaurants.count }}</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="bg-black-gradient border border-dark p-4 rounded text-center">
+                <i class="fas fa-clock text-gold mb-3 fs-3"></i>
+                <h6 class="text-white text-uppercase tracking-widest fs-8">Today's Guests</h6>
+                <h2 class="font-secondary text-white mb-0">{{ today_res }}</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="bg-black-gradient border border-dark p-4 rounded text-center border-gold">
+                <i class="fas fa-star text-gold mb-3 fs-3"></i>
+                <h6 class="text-white text-uppercase tracking-widest fs-8">Elite Access</h6>
+                <h2 class="font-secondary text-white mb-0">ENABLED</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Reservations Table -->
+    <div class="row" data-aos="fade-up" data-aos-delay="200">
+        <div class="col-12">
+            <div class="bg-black-gradient border border-dark rounded overflow-hidden">
+                <div class="p-4 border-bottom border-dark d-flex justify-content-between align-items-center">
+                    <h4 class="font-secondary text-white mb-0">Incoming Reservations</h4>
+                    <button class="btn btn-outline-gold btn-sm px-3 py-1 fs-8 tracking-wider text-uppercase"
+                        onclick="window.print()">
+                        <i class="fas fa-print me-2"></i>Export List
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover mb-0 align-middle">
+                        <thead class="bg-dark text-gold text-uppercase tracking-widest fs-8 border-bottom border-dark">
+                            <tr>
+                                <th class="p-4">Customer</th>
+                                <th>Restaurant</th>
+                                <th>Schedule</th>
+                                <th>Guests</th>
+                                <th>Table</th>
+                                <th>Value</th>
+                                <th class="p-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="fs-7 text-secondary">
+                            {% for res in reservations %}
+                            <tr class="border-bottom border-dark">
+                                <td class="p-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-dark rounded-circle d-flex align-items-center justify-content-center me-3"
+                                            style="width:35px;height:35px;">
+                                            <i class="fas fa-user-circle text-gold fs-5"></i>
+                                        </div>
+                                        <div>
+                                            <span class="d-block text-white fw-bold mb-1">{{ res.user.username }}</span>
+                                            <span class="fs-8 text-secondary">{{ res.user.email }}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-white font-secondary">{{ res.restaurant.name }}</td>
+                                <td>
+                                    <span class="d-block text-white mb-1">
+                                        <i class="far fa-calendar-alt text-gold me-2"></i>{{ res.date }}
+                                    </span>
+                                    <span class="fs-8">
+                                        <i class="far fa-clock text-gold me-2"></i>{{ res.time|time:"H:i" }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-dark border border-secondary text-gold rounded-pill px-3">{{
+                                        res.people_count }}px</span>
+                                </td>
+                                <td>
+                                    <span class="d-block text-white mb-1">#{{ res.table.table_number }}</span>
+                                    <span class="fs-8 text-uppercase tracking-wider">{{ res.table.get_table_type_display
+                                        }}</span>
+                                </td>
+                                <td class="text-gold fw-bold">₹{{ res.booking_price }}</td>
+                                <td class="p-4">
+                                    <div class="d-flex gap-2">
+                                        <a href="/admin/core/reservation/{{ res.id }}/change/"
+                                            class="btn btn-dark btn-sm text-gold border-secondary hover-bg-gold transition-all"
+                                            title="Edit in Admin">
+                                            <i class="fas fa-pen-nib"></i>
+                                        </a>
+                                        <button
+                                            class="btn btn-dark btn-sm text-gold border-secondary hover-bg-gold transition-all"
+                                            title="View Details"
+                                            onclick="alert('Viewing pre-orders: {% for po in res.preorders.all %}{{ po.quantity }}x {{ po.menu_item.name }}{% empty %}None{% endfor %}')">
+                                            <i class="fas fa-info-circle"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center py-5">
+                                    <div class="text-muted">
+                                        <i class="fas fa-inbox fa-3x mb-3 d-block"></i>
+                                        NO BOOKINGS REGISTERED YET
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .table-dark {
+        --bs-table-bg: transparent !important;
+        --bs-table-border-color: #222 !important;
+        background-color: transparent !important;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(212, 175, 55, 0.05) !important;
+    }
+
+    .btn-dark:hover {
+        color: var(--black) !important;
+    }
+</style>
+{% endblock %}

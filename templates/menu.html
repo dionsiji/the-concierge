@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Pre-order Menu | {{ reservation.restaurant.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row gx-5">
+        <div class="col-lg-8" data-aos="fade-right">
+            <h1 class="font-secondary display-5 text-white mb-2">Pre-order Your Menu</h1>
+            <p class="text-secondary tracking-widest text-uppercase mb-5 fs-7">{{ reservation.restaurant.name }} • {{
+                reservation.date }}</p>
+
+            <ul class="nav nav-pills mb-5 border-bottom border-dark pb-3 gap-2" id="pills-tab" role="tablist">
+                <li class="nav-item border border-secondary rounded">
+                    <a class="nav-link active rounded text-white px-4" id="pills-all-tab" data-bs-toggle="pill"
+                        href="#pills-all" role="tab">All</a>
+                </li>
+                {% for category in categories %}
+                <li class="nav-item border border-secondary rounded">
+                    <a class="nav-link text-white px-4" id="pills-{{ category|slugify }}-tab" data-bs-toggle="pill"
+                        href="#pills-{{ category|slugify }}" role="tab">{{ category }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+
+            <div class="tab-content" id="pills-tabContent">
+                <div class="tab-pane fade show active" id="pills-all" role="tabpanel">
+                    <div class="row g-4">
+                        {% for item in menu_items %}
+                        <div class="col-md-6 mb-3">
+                            <div
+                                class="d-flex align-items-center bg-black-gradient border border-dark rounded p-3 h-100 transition-transform hover-scale menu-card">
+                                <div class="flex-grow-1 ps-2">
+                                    <h6 class="font-secondary text-white mb-1">{{ item.name }}</h6>
+                                    <p class="text-gold fs-7 fw-bold mb-0">₹{{ item.price }}</p>
+                                </div>
+                                <div class="ms-3 text-center">
+                                    <button class="btn btn-outline-gold btn-sm rounded-circle add-to-cart"
+                                        data-id="{{ item.id }}" data-name="{{ item.name }}"
+                                        data-price="{{ item.price }}"><i class="fas fa-plus"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4" data-aos="fade-left">
+            <div class="bg-black border border-dark p-4 position-sticky top-0 shadow-lg">
+                <h4
+                    class="font-secondary text-white border-bottom border-dark pb-3 mb-4 d-flex justify-content-between align-items-center">
+                    Your Order <span class="badge bg-gold text-black rounded-pill fs-8" id="cart-count">0</span>
+                </h4>
+
+                <div id="cart-items" class="mb-4 text-secondary fs-7" style="max-height: 40vh; overflow-y: auto;">
+                    <div class="text-center py-4 text-muted">Awaiting your selection...</div>
+                </div>
+
+                <div class="border-top border-dark pt-3 mb-4 pb-2">
+                    <div class="d-flex justify-content-between text-white fs-5 font-secondary">
+                        <span>Total Estimate:</span>
+                        <span class="text-gold fw-bold" id="cart-total">₹0.00</span>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-3">
+                    <button id="btn-save-order" class="btn btn-gold py-3 text-uppercase tracking-wider fw-bold">Save
+                        Pre-order</button>
+                    <a href="{% url 'profile' %}"
+                        class="btn btn-outline-secondary py-2 text-uppercase tracking-wider">Skip Pre-order</a>
+                </div>
+
+                <div class="mt-4 text-center">
+                    <i class="fas fa-info-circle text-gold mb-2 d-block fa-2x"></i>
+                    <p class="text-secondary fs-8 fst-italic">Don't worry, you can always order more at the venue.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let cart = {};
+
+    document.querySelectorAll('.add-to-cart').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const btnEl = e.target.closest('button');
+            const id = btnEl.dataset.id;
+            const name = btnEl.dataset.name;
+            const price = parseFloat(btnEl.dataset.price);
+
+            if (cart[id]) {
+                cart[id].qty += 1;
+            } else {
+                cart[id] = { name, price, qty: 1 };
+            }
+
+            // Simple animation
+            gsap.fromTo(btnEl, { scale: 0.8 }, { scale: 1, duration: 0.2, ease: "back.out(1.7)" });
+
+            updateCartUI();
+        });
+    });
+
+    function updateCartUI() {
+        const cartEl = document.getElementById('cart-items');
+        cartEl.innerHTML = '';
+
+        let total = 0;
+        let count = 0;
+
+        Object.keys(cart).forEach(id => {
+            const item = cart[id];
+            total += item.price * item.qty;
+            count += item.qty;
+
+            cartEl.innerHTML += `
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div style="width: 50%;">
+                        <span class="d-block text-white mb-1 line-clamp-1">${item.name}</span>
+                        <span class="text-gold fs-8">₹${item.price}</span>
+                    </div>
+                    <div class="d-flex align-items-center border border-secondary rounded px-2 bg-dark">
+                        <button class="btn btn-sm text-white p-0 px-1 border-0 minus-btn" data-id="${id}">-</button>
+                        <span class="px-2 text-white fs-7">${item.qty}</span>
+                        <button class="btn btn-sm text-gold p-0 px-1 border-0 plus-btn" data-id="${id}">+</button>
+                    </div>
+                </div>
+            `;
+        });
+
+        if (count === 0) {
+            cartEl.innerHTML = '<div class="text-center py-4 text-muted">Awaiting your selection...</div>';
+        }
+
+        document.getElementById('cart-count').innerText = count;
+        document.getElementById('cart-total').innerText = `₹${total.toFixed(2)}`;
+
+        // Attach listeners for +/-
+        document.querySelectorAll('.plus-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = e.target.dataset.id;
+                cart[id].qty += 1;
+                updateCartUI();
+            });
+        });
+
+        document.querySelectorAll('.minus-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = e.target.dataset.id;
+                cart[id].qty -= 1;
+                if (cart[id].qty <= 0) delete cart[id];
+                updateCartUI();
+            });
+        });
+    }
+
+    document.getElementById('btn-save-order').addEventListener('click', () => {
+        if (Object.keys(cart).length === 0) {
+            alert('Please add items to your pre-order cart.');
+            return;
+        }
+
+        const payload = {
+            cart: Object.keys(cart).map(id => ({ id: id, quantity: cart[id].qty }))
+        };
+
+        fetch("{% url 'save_preorder' reservation.id %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload)
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Order details saved successfully.");
+                    window.location.href = "{% url 'profile' %}";
+                } else {
+                    alert("Failed to save order.");
+                }
+            });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Login | The Concierge{% endblock %}
+
+{% block content %}
+<div class="container min-vh-100 d-flex align-items-center justify-content-center py-5">
+    <div class="row w-100 justify-content-center">
+        <div class="col-md-8 col-lg-4" data-aos="zoom-in" data-aos-duration="1000">
+            <div class="bg-black-gradient border border-dark p-4 px-5 shadow-lg position-relative rounded"
+                style="transition: transform 0.3s ease; transform: scale(0.95);">
+                <div class="position-absolute top-0 start-50 translate-middle">
+                    <div class="bg-gold text-black rounded-circle d-flex align-items-center justify-content-center"
+                        style="width: 60px; height: 60px; box-shadow: 0 0 20px rgba(212,175,55,0.4);">
+                        <i class="fas fa-lock fs-4"></i>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4 mb-5">
+                    <h2 class="font-secondary text-white tracking-widest text-uppercase fs-4">Member Access</h2>
+                    <div style="width: 30px; height: 1px; background-color: var(--gold); margin: 15px auto;"></div>
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="username"
+                            class="form-label text-secondary tracking-wider fs-8 text-uppercase">Username</label>
+                        <input type="text"
+                            class="form-control form-control-lg bg-black text-white border-dark rounded-0 px-4 py-3 shadow-none focus-ring focus-ring-gold"
+                            id="username" name="username" required>
+                    </div>
+
+                    <div class="mb-5">
+                        <label for="password"
+                            class="form-label text-secondary tracking-wider fs-8 text-uppercase d-flex justify-content-between">
+                            Password
+                            <a href="#" class="text-gold text-decoration-underline hover-white">Forgot?</a>
+                        </label>
+                        <input type="password"
+                            class="form-control form-control-lg bg-black text-white border-dark rounded-0 px-4 py-3 shadow-none focus-ring focus-ring-gold"
+                            id="password" name="password" required>
+                    </div>
+
+                    <button type="submit"
+                        class="btn btn-gold w-100 py-3 text-uppercase tracking-wider fw-bold hover-scale shadow-lg">Sign
+                        In</button>
+                </form>
+
+                <div class="mt-5 text-center border-top border-dark pt-4">
+                    <p class="text-secondary fs-7">Not a member yet? <a href="{% url 'signup' %}"
+                            class="text-gold ms-1 hover-white border-bottom border-gold pb-1">Create an Account</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .focus-ring-gold {
+        --bs-focus-ring-color: rgba(212, 175, 55, 0.25);
+    }
+
+    .hover-white:hover {
+        color: white !important;
+        border-color: white !important;
+    }
+</style>
+{% endblock %}

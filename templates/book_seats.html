@@ -1,0 +1,314 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Book Seats | {{ restaurant.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5" data-aos="fade-in">
+    <div class="text-center mb-5">
+        <h1 class="font-secondary display-4 text-white">Reserve Your Table</h1>
+        <p class="text-gold tracking-widest text-uppercase">At {{ restaurant.name }}</p>
+        <div style="width: 50px; height: 2px; background-color: var(--gold); margin: 15px auto;"></div>
+    </div>
+
+    <!-- Initial Selection -->
+    <div id="step-1" class="bg-black-gradient border border-dark p-4 p-md-5 rounded mb-5 shadow-lg fade-in">
+        <h4 class="text-white font-secondary mb-4 text-center">Plan Your Visit</h4>
+        <div class="row g-4 justify-content-center align-items-end">
+            <div class="col-md-4">
+                <label class="text-secondary fs-8 tracking-wider text-uppercase mb-2">Party Size</label>
+                <select id="booking-people" class="form-select bg-dark text-white border-dark py-3">
+                    <option value="" selected disabled>Select Guests...</option>
+                    <option value="2">1-2 People</option>
+                    <option value="4">3-4 People</option>
+                    <option value="6">5-6 People</option>
+                    <option value="8">7-8 People</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="text-secondary fs-8 tracking-wider text-uppercase mb-2">Arrival Date</label>
+                <input type="date" id="booking-date" class="form-control bg-dark text-white border-dark py-3">
+            </div>
+            <div class="col-md-3">
+                <label class="text-secondary fs-8 tracking-wider text-uppercase mb-2">Time</label>
+                <input type="time" id="booking-time" class="form-control bg-dark text-white border-dark py-3">
+            </div>
+            <div class="col-md-2 mt-4 mt-md-0">
+                <button class="btn btn-gold w-100 py-3 text-uppercase tracking-wider fw-bold hover-scale"
+                    id="btn-proceed-seats">Find Tables</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 3: Seat Selection UI -->
+    <div id="step-2" class="fade-in" style="display: none;">
+        <div class="row gx-5">
+            <div class="col-lg-8">
+                <div class="bg-black-gradient border border-dark p-4 rounded mb-4">
+                    <h5
+                        class="text-white text-uppercase tracking-wider fs-7 mb-4 border-bottom border-dark pb-3 text-center">
+                        Select Your Table</h5>
+
+                    <div id="table-grid" class="seat-grid justify-content-center pb-5">
+                        <!-- Tables will be loaded here via AJAX -->
+                    </div>
+
+                    <div class="d-flex justify-content-center mt-4 gap-4 px-3 flex-wrap border-top border-dark pt-4">
+                        <div class="d-flex align-items-center">
+                            <div class="seat available me-2" style="width:20px;height:20px;"></div> <span
+                                class="text-secondary fs-8">Available</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="seat booked me-2" style="width:20px;height:20px;"></div> <span
+                                class="text-secondary fs-8">Booked</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="seat selected me-2" style="width:20px;height:20px;"></div> <span
+                                class="text-secondary fs-8">Selected</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="seat high-demand me-2" style="width:20px;height:20px;"></div> <span
+                                class="text-secondary fs-8">High Demand</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pricing Summary -->
+            <div class="col-lg-4">
+                <div class="bg-black border border-dark p-4 position-sticky top-0">
+                    <h5 class="font-secondary text-gold mb-4 border-bottom border-dark pb-2">Booking Summary</h5>
+
+                    <div id="summary-empty" class="text-secondary fs-7 text-center py-4">
+                        Please select a table to see booking details.
+                    </div>
+
+                    <div id="summary-content" style="display: none;">
+                        <ul class="list-unstyled mb-4 text-white fw-light fs-7">
+                            <li class="d-flex justify-content-between mb-2"><span>Guests:</span> <strong id="sum-guests"
+                                    class="text-gold">--</strong></li>
+                            <li class="d-flex justify-content-between mb-2"><span>Date:</span> <strong id="sum-date"
+                                    class="text-gold">--</strong></li>
+                            <li class="d-flex justify-content-between mb-2"><span>Time:</span> <strong id="sum-time"
+                                    class="text-gold">--</strong></li>
+                            <li class="d-flex justify-content-between mb-2"><span>Table No:</span> <strong
+                                    id="sum-table" class="text-gold">--</strong></li>
+                            <li class="d-flex justify-content-between mb-2"><span>Type:</span> <strong id="sum-type"
+                                    class="text-gold text-capitalize">--</strong></li>
+                        </ul>
+
+                        <hr class="border-secondary">
+
+                        <div class="d-flex justify-content-between mb-2 text-secondary fs-7">
+                            <span>Base Price:</span> <span id="sum-base-price">₹0</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3 text-success fs-7">
+                            <span>Online Discount (11%):</span> <span id="sum-discount">-₹0</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-4 fs-5 font-secondary">
+                            <span class="text-white">Final Amount:</span> <strong class="text-gold"
+                                id="sum-final-price">₹0</strong>
+                        </div>
+
+                        <button id="btn-confirm"
+                            class="btn btn-gold w-100 py-3 text-uppercase tracking-wider fw-bold">Confirm
+                            Reservation</button>
+                        <p class="text-center text-secondary mt-3" style="font-size: 0.65rem;">Amount will be added to
+                            your final dining bill. No online payment required.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade glass-modal" id="successModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-black border border-gold shadow-lg">
+            <div class="modal-body text-center p-5">
+                <div class="mb-4 text-gold" style="font-size: 4rem;">
+                    <i class="fas fa-check-circle animate-bounce"></i>
+                </div>
+                <h3 class="font-secondary text-white mb-3 tracking-widest">Reservation Confirmed</h3>
+                <p class="text-secondary fs-7 mb-5">Your table at {{ restaurant.name }} is successfully reserved.</p>
+                <h6 class="text-white fw-light mb-4">Would you like to pre-select your menu?</h6>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{% url 'profile' %}" class="btn btn-outline-secondary px-4">Skip for now</a>
+                    <a href="#" id="menu-btn" class="btn btn-gold px-4">Pre-order Menu</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<style>
+    .glass-modal .modal-content {
+        background: rgba(10, 10, 10, 0.95) !important;
+        backdrop-filter: blur(10px);
+    }
+
+    /* Restaurant Table Styles instead of uniform theatre seats */
+    .seat {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin: 10px;
+        color: #fff;
+    }
+
+    .shape-standard {
+        width: 60px;
+        height: 60px;
+        border-radius: 8px;
+    }
+
+    .shape-window {
+        width: 80px;
+        height: 50px;
+        border-radius: 4px;
+        border: 1px dashed rgba(255, 255, 255, 0.3);
+    }
+
+    .shape-premium {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+    }
+
+    .shape-private {
+        width: 80px;
+        height: 80px;
+        border-radius: 15px;
+        border: 2px solid var(--gold);
+    }
+
+    #table-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+        padding: 30px;
+        background: #0a0a0a;
+        border-radius: 10px;
+    }
+</style>
+<script>
+    let peopleCount = 0;
+    let selectedTable = null;
+    let reservationId = null;
+
+    document.getElementById('btn-proceed-seats').addEventListener('click', () => {
+        peopleCount = document.getElementById('booking-people').value;
+        const date = document.getElementById('booking-date').value;
+        const time = document.getElementById('booking-time').value;
+
+        if (!peopleCount) {
+            alert('Please select party size');
+            return;
+        }
+
+        if (!date || !time) {
+            alert('Please select date and time');
+            return;
+        }
+
+        const e = document.getElementById('booking-people');
+        document.getElementById('sum-guests').innerText = e.options[e.selectedIndex].text;
+        document.getElementById('sum-date').innerText = date;
+        document.getElementById('sum-time').innerText = time;
+
+        loadTables();
+    });
+
+    function loadTables() {
+        fetch("{% url 'get_tables' restaurant.id %}")
+            .then(res => res.json())
+            .then(data => {
+                const grid = document.getElementById('table-grid');
+                grid.innerHTML = '';
+
+                data.tables.forEach(t => {
+                    const capacityDiff = t.capacity - parseInt(peopleCount);
+                    if (capacityDiff < 0 || capacityDiff > 2) return; // Only show tables that exactly match or fit up to 2 extra seats
+
+                    const div = document.createElement('div');
+                    div.className = `seat shape-${t.type} ${t.is_booked ? 'booked' : (t.demand_level === 'high' ? 'high-demand' : 'available')}`;
+                    div.innerHTML = `T${t.table_number}`;
+                    div.title = `${t.type.toUpperCase()} | ₹${t.price} | Max ${t.capacity}px`;
+
+                    if (!t.is_booked) {
+                        div.addEventListener('click', () => selectTable(div, t));
+                    }
+
+                    grid.appendChild(div);
+                });
+
+                document.getElementById('step-2').style.display = 'block';
+                document.getElementById('step-2').scrollIntoView({ behavior: 'smooth' });
+            });
+    }
+
+    function selectTable(element, tableData) {
+        document.querySelectorAll('.seat').forEach(s => s.classList.remove('selected'));
+        element.classList.add('selected');
+        selectedTable = tableData;
+
+        // Update Summary
+        document.getElementById('summary-empty').style.display = 'none';
+        document.getElementById('summary-content').style.display = 'block';
+
+        document.getElementById('sum-table').innerText = tableData.table_number;
+        document.getElementById('sum-type').innerText = tableData.type;
+
+        const price = parseFloat(tableData.price);
+        const discount = price * 0.11;
+        const finalPrice = price - discount;
+
+        document.getElementById('sum-base-price').innerText = `₹${price.toFixed(2)}`;
+        document.getElementById('sum-discount').innerText = `-₹${discount.toFixed(2)}`;
+        document.getElementById('sum-final-price').innerText = `₹${finalPrice.toFixed(2)}`;
+        document.getElementById('sum-final-price').dataset.raw = finalPrice;
+    }
+
+    document.getElementById('btn-confirm').addEventListener('click', () => {
+        if (!selectedTable) return;
+
+        const payload = {
+            restaurant_id: "{{ restaurant.id }}",
+            table_id: selectedTable.id,
+            people: peopleCount,
+            date: document.getElementById('booking-date').value,
+            time: document.getElementById('booking-time').value,
+            price: document.getElementById('sum-final-price').dataset.raw
+        };
+
+        fetch("{% url 'confirm_booking' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload)
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    // Show modal
+                    const modal = new bootstrap.Modal(document.getElementById('successModal'));
+                    document.getElementById('menu-btn').href = `/menu/${data.reservation_id}/`;
+                    modal.show();
+                } else {
+                    alert(data.message || 'Error occurred');
+                }
+            });
+    });
+
+</script>
+{% endblock %}

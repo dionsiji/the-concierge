@@ -1,0 +1,259 @@
+:root {
+    --gold: #D4AF37;
+    --dark-red: #8B0000;
+    --black: #050505;
+    --black-gradient: #111111;
+    --white: #F8F8F8;
+    --grey: #333333;
+}
+
+body {
+    background-color: var(--black);
+    color: var(--white);
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-secondary {
+    font-family: 'Playfair Display', serif;
+}
+
+.text-gold {
+    color: var(--gold) !important;
+}
+
+.bg-gold {
+    background-color: var(--gold) !important;
+}
+
+.text-dark-red {
+    color: var(--dark-red) !important;
+}
+
+.bg-dark-red {
+    background-color: var(--dark-red) !important;
+}
+
+.bg-black-gradient {
+    background: linear-gradient(135deg, #050505 0%, #151515 100%) !important;
+}
+
+.tracking-widest {
+    letter-spacing: 0.25em;
+}
+
+.tracking-wider {
+    letter-spacing: 0.1em;
+}
+
+.fs-7 {
+    font-size: 0.875rem;
+}
+
+.fs-8 {
+    font-size: 0.75rem;
+}
+
+/* Links & Buttons */
+a {
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+a.hover-gold:hover {
+    color: var(--gold) !important;
+}
+
+.btn-gold {
+    background-color: var(--gold);
+    color: var(--black);
+    border: 1px solid var(--gold);
+    transition: all 0.3s ease;
+}
+
+.btn-gold:hover {
+    background-color: transparent;
+    color: var(--gold);
+}
+
+.btn-outline-gold {
+    background-color: transparent;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    transition: all 0.3s ease;
+}
+
+.btn-outline-gold:hover {
+    background-color: var(--gold);
+    color: var(--black);
+}
+
+.hover-scale {
+    transition: transform 0.3s ease;
+}
+
+.hover-scale:hover {
+    transform: scale(1.05);
+}
+
+.social-icon:hover {
+    background-color: var(--gold) !important;
+    border-color: var(--gold) !important;
+    color: var(--black) !important;
+}
+
+/* Specific Component Styles */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--black);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loading-text {
+    opacity: 0;
+    font-size: 3rem;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+}
+
+/* Animations */
+.fade-in {
+    animation: fadeIn 1s ease-in forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.hero-section {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.restaurant-card {
+    transition: all 0.4s ease;
+    cursor: pointer;
+    overflow: hidden;
+    height: 400px;
+    background: var(--black-gradient);
+    border: 1px solid var(--grey);
+}
+
+.restaurant-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--gold);
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+}
+
+.restaurant-card .card-img {
+    height: 60%;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.6s ease;
+}
+
+.restaurant-card:hover .card-img {
+    transform: scale(1.1);
+}
+
+/* BookMyShow Style Grid for Seats */
+.seat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.seat {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    border: 1px solid var(--grey);
+    color: #FFF;
+    font-size: 0.8rem;
+    position: relative;
+}
+
+.seat.available {
+    background-color: rgba(46, 204, 113, 0.2);
+    border-color: #2ecc71;
+}
+
+.seat.available:hover {
+    background-color: #2ecc71;
+    color: #fff;
+    box-shadow: 0 0 15px rgba(46, 204, 113, 0.5);
+    transform: scale(1.1);
+}
+
+.seat.booked {
+    background-color: rgba(231, 76, 60, 0.2);
+    border-color: #e74c3c;
+    cursor: not-allowed;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.seat.high-demand {
+    background-color: rgba(230, 126, 34, 0.2);
+    border-color: #e67e22;
+}
+
+.seat.high-demand:hover {
+    background-color: #e67e22;
+    color: #fff;
+    box-shadow: 0 0 15px rgba(230, 126, 34, 0.5);
+    transform: scale(1.1);
+}
+
+.seat.selected {
+    background-color: var(--gold) !important;
+    border-color: var(--gold) !important;
+    color: var(--black) !important;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.8) !important;
+    transform: scale(1.1);
+}
+
+/* Forms */
+.form-control {
+    background-color: var(--black);
+    border: 1px solid var(--grey);
+    color: var(--white);
+    border-radius: 0;
+}
+
+.form-control:focus {
+    background-color: var(--black-gradient);
+    border-color: var(--gold);
+    color: var(--white);
+    box-shadow: none;
+}

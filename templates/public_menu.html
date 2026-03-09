@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Menu | {{ restaurant.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row gx-5 justify-content-center">
+        <div class="col-lg-10" data-aos="fade-up">
+            <div class="text-center mb-5">
+                <span class="text-uppercase tracking-widest text-gold fs-8 mb-2 d-block">Culinary Delights</span>
+                <h1 class="font-secondary display-5 text-white mb-2">{{ restaurant.name }} Menu</h1>
+                <p class="text-secondary tracking-widest text-uppercase mb-5 fs-7">{{ restaurant.cuisine }} Cuisine</p>
+                <div style="width: 50px; height: 1px; background-color: var(--gold); margin: 0 auto;"></div>
+            </div>
+
+            <ul class="nav nav-pills mb-5 border-bottom border-dark pb-3 gap-2 justify-content-center" id="pills-tab"
+                role="tablist">
+                <li class="nav-item border border-secondary rounded">
+                    <a class="nav-link active rounded text-white px-4" id="pills-all-tab" data-bs-toggle="pill"
+                        href="#pills-all" role="tab">All</a>
+                </li>
+                {% for category in categories %}
+                <li class="nav-item border border-secondary rounded">
+                    <a class="nav-link text-white px-4" id="pills-{{ category|slugify }}-tab" data-bs-toggle="pill"
+                        href="#pills-{{ category|slugify }}" role="tab">{{ category }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+
+            <div class="tab-content" id="pills-tabContent">
+                <div class="tab-pane fade show active" id="pills-all" role="tabpanel">
+                    <div class="row g-4">
+                        {% for item in menu_items %}
+                        <div class="col-md-6 mb-3">
+                            <div
+                                class="d-flex align-items-center bg-black-gradient border border-dark rounded p-3 h-100 transition-transform hover-scale menu-card">
+                                <div class="flex-grow-1 ps-2 text-center">
+                                    <h5 class="font-secondary text-white mb-1">{{ item.name }}</h5>
+                                    <p class="text-gold fs-7 fw-bold mb-0">₹{{ item.price }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% if not menu_items %}
+                        <div class="col-12 text-center text-secondary py-5">
+                            Our menu is currently being updated. Please check back later.
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% for category in categories %}
+                <div class="tab-pane fade" id="pills-{{ category|slugify }}" role="tabpanel">
+                    <div class="row g-4">
+                        {% for item in menu_items %}
+                        {% if item.category == category %}
+                        <div class="col-md-6 mb-3">
+                            <div
+                                class="d-flex align-items-center bg-black-gradient border border-dark rounded p-3 h-100 transition-transform hover-scale menu-card">
+                                <div class="flex-grow-1 ps-2 text-center">
+                                    <h5 class="font-secondary text-white mb-1">{{ item.name }}</h5>
+                                    <p class="text-gold fs-7 fw-bold mb-0">₹{{ item.price }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="text-center mt-5 pt-5 border-top border-dark">
+                <a href="{% url 'restaurant_detail' restaurant.id %}"
+                    class="btn btn-outline-gold py-3 px-5 text-uppercase tracking-wider fw-bold hover-scale">Back to
+                    Restaurant</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
